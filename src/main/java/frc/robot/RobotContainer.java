@@ -9,6 +9,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.robot_subsystems.DriveSubsystem;
 
 public class RobotContainer {
@@ -39,5 +40,9 @@ public class RobotContainer {
                 config);
 
         return exampleTrajectory;
+    }
+    
+    public DriveSubsystem getDriveSubsystem() {
+        return driveSubsystem;
     }
 }

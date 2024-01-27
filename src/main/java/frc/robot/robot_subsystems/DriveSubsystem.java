@@ -3,7 +3,7 @@ package frc.robot.robot_subsystems;
 import java.util.Optional;
 
 import com.kauailabs.navx.frc.AHRS;
-
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,6 +18,9 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.I2C.Port;
 import entechlib.entech_subsystems.EntechSubsystem;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotConstants;
 import frc.robot.RobotConstants.DrivetrainConstants;
 import frc.robot.robot_swerve.SwerveModule;
@@ -25,6 +28,7 @@ import frc.robot.robot_swerve.SwerveUtils;
 
 
 public class DriveSubsystem extends EntechSubsystem{
+
     private static final boolean ENABLED = true;
 
     public static final double FRONT_LEFT_VIRTUAL_OFFSET_RADIANS = 2.2759093;
@@ -36,6 +40,8 @@ public class DriveSubsystem extends EntechSubsystem{
 
     public static final double FIELD_LENGTH_INCHES = 54 * 12 + 1; // 54ft 1in
     public static final double FIELD_WIDTH_INCHES = 26 * 12 + 7; // 26ft 7in
+
+    private Field2d field = new Field2d();
 
     private SwerveModule m_frontLeft;
     private SwerveModule m_frontRight;
@@ -85,6 +91,7 @@ public class DriveSubsystem extends EntechSubsystem{
                     pose);
         }
     }
+
     /**
      * Method to drive the robot using joystick info.
      *
