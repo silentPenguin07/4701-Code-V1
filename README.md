@@ -1,8 +1,6 @@
 ## Description
 
-EntechLib, a group of common tools and classes, as well as a swerve library.
-
-Our swerve library is focused of reliability and ensuring every piece of hardware we say is compatible will actually work.
+Skeleton Swerve Code using entech library
 
 ## Quality Gate
 
