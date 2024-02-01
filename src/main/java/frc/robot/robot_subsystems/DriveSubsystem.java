@@ -4,6 +4,9 @@ import java.util.Optional;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PathPlannerLogging;
+import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,6 +24,7 @@ import entechlib.entech_subsystems.EntechSubsystem;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.RobotConstants;
 import frc.robot.RobotConstants.DrivetrainConstants;
 import frc.robot.robot_swerve.SwerveModule;
@@ -28,7 +32,7 @@ import frc.robot.robot_swerve.SwerveUtils;
 
 
 public class DriveSubsystem extends EntechSubsystem{
-
+    
     private static final boolean ENABLED = true;
 
     public static final double FRONT_LEFT_VIRTUAL_OFFSET_RADIANS = 2.2759093;
@@ -43,6 +47,8 @@ public class DriveSubsystem extends EntechSubsystem{
 
     private Field2d field = new Field2d();
 
+    private SwerveDriveKinematics kinematics;
+    
     private SwerveModule m_frontLeft;
     private SwerveModule m_frontRight;
     private SwerveModule m_rearLeft;
@@ -60,6 +66,38 @@ public class DriveSubsystem extends EntechSubsystem{
 
     private SwerveDriveOdometry m_odometry;
 
+    // constructor
+    public DriveSubsystem()
+    {
+        // autobuilder configuration
+        AutoBuilder.configureHolonomic(
+            this::getPose, // robot pose supplier
+            this::resetOdometry, // resets odometry
+            this::getSpeeds, // ChassisSpeeds supplier
+            this::driveRobotRelative,
+            new HolonomicPathFollowerConfig(FIELD_WIDTH_INCHES, FIELD_LENGTH_INCHES, new ReplanningConfig()),
+            () -> {
+                // Boolean supplier that controls when the path will be mirrored for the red alliance
+                // This will flip the path being followed to the red side of the field.
+                // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+                var alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
+                    return alliance.get() == DriverStation.Alliance.Red;
+                }
+                return false;
+            },
+            this // Reference to this subsystem to set requirements
+
+        );
+
+        // set up custom logging to add the current path to a field 2d widget
+        // TODO: figure out what this does
+        PathPlannerLogging.setLogActivePathCallback((poses) -> field.getObject("path").setPoses(poses));
+    
+            SmartDashboard.putData("Field", field);
+    }
+
     private double getGyroAngle() {
         return m_gyro.getAngle() + 0;
     }
@@ -68,9 +106,12 @@ public class DriveSubsystem extends EntechSubsystem{
      * Returns the currently-estimated pose of the robot.
      *
      * @return The pose.
-     */
-    public Optional<Pose2d> getPose() {
+     * public Optional<Pose2d> getPose() {
         return ENABLED ? Optional.of(m_odometry.getPoseMeters()) : Optional.empty();
+    }
+     */
+    public Pose2d getPose() {
+        return m_odometry.getPoseMeters();
     }
 
     /**
@@ -91,6 +132,68 @@ public class DriveSubsystem extends EntechSubsystem{
                     pose);
         }
     }
+
+
+
+    // returns the Module speeds in ChassisSpeeds form
+    public ChassisSpeeds getSpeeds()
+    {
+        return kinematics.toChassisSpeeds(getModuleStates());
+    }
+
+
+
+    // helper method for returning an array of SwerveModuleState
+    public SwerveModuleState[] getModuleStates()
+    {
+        SwerveModuleState[] states = new SwerveModuleState[4];
+        states[0] = m_frontLeft.getState();
+        states[1] = m_frontRight.getState();
+        states[2] = m_rearLeft.getState();
+        states[3] = m_rearRight.getState();
+
+        return states;
+    }
+
+    // no idea what this is either
+    // TODO: figure out what these methods even do
+    public void driveFieldRelative(ChassisSpeeds fieldRelativeSpeeds)
+    {
+        driveRobotRelative(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds, getPose().getRotation()));
+    }
+
+    // no idea what this is yet
+    public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds)
+    {
+        /*
+         * TODO: Change the second parameter of ChassisSpeeds.discretize()
+         * Parameters:
+            continuousSpeeds The continuous speeds.
+            dtSeconds The duration of the timestep the speeds should be applied for.
+         */
+        ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+        SwerveModuleState[] targetStates = kinematics.toSwerveModuleStates(targetSpeeds);
+
+        setModuleStates(targetStates);
+    }
+
+    /**
+     * Sets the swerve ModuleStates.
+     *
+     * @param desiredStates The desired SwerveModule states.
+     */
+    public void setModuleStates(SwerveModuleState[] desiredStates) {
+        if (ENABLED) {
+            SwerveDriveKinematics.desaturateWheelSpeeds(
+                    desiredStates, DrivetrainConstants.MAX_SPEED_METERS_PER_SECOND);
+
+            m_frontLeft.setDesiredState(desiredStates[0]);
+            m_frontRight.setDesiredState(desiredStates[1]);
+            m_rearLeft.setDesiredState(desiredStates[2]);
+            m_rearRight.setDesiredState(desiredStates[3]);
+        }
+    }
+
 
     /**
      * Method to drive the robot using joystick info.
@@ -194,22 +297,7 @@ public class DriveSubsystem extends EntechSubsystem{
         }
     }
 
-    /**
-     * Sets the swerve ModuleStates.
-     *
-     * @param desiredStates The desired SwerveModule states.
-     */
-    public void setModuleStates(SwerveModuleState[] desiredStates) {
-        if (ENABLED) {
-            SwerveDriveKinematics.desaturateWheelSpeeds(
-                    desiredStates, DrivetrainConstants.MAX_SPEED_METERS_PER_SECOND);
-
-            m_frontLeft.setDesiredState(desiredStates[0]);
-            m_frontRight.setDesiredState(desiredStates[1]);
-            m_rearLeft.setDesiredState(desiredStates[2]);
-            m_rearRight.setDesiredState(desiredStates[3]);
-        }
-    }
+    
 
     /**
      * Resets the drive encoders to currently read a position of 0 and seeds the
@@ -230,7 +318,7 @@ public class DriveSubsystem extends EntechSubsystem{
         if (ENABLED) {
             m_gyro.reset();
             m_gyro.setAngleAdjustment(180);
-            Pose2d pose = getPose().get();
+            Pose2d pose = getPose();
             Pose2d pose2 = new Pose2d(pose.getTranslation(), Rotation2d.fromDegrees(0));
             resetOdometry(pose2);
         }
@@ -351,5 +439,6 @@ public class DriveSubsystem extends EntechSubsystem{
             resetOdometry(initialPose);
         }
     }
+
 
 }

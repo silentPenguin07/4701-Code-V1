@@ -73,6 +73,28 @@ public class Robot extends TimedRobot{
         updateToSmartDash();
     }
 
+    // autonomous runs the autonomous command selected by your {@link RobotContainer} class
+    @Override
+    public void autonomousInit()
+    {
+        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+
+        // schedule the autonomous command (example)
+        if (m_autonomousCommand != null)
+        {
+            m_autonomousCommand.schedule();
+        }
+    }
+
+    // called periodically during autonomous
+    @Override
+    public void autonomousPeriodic()
+    {
+        
+    }
+
+    
+
     public void updateToSmartDash() {
         // SmartDashboard.putNumber("FrontLeftDrivingEncoderPosition",
         // m_robotContainer.getDrivetrain().getFrontLeftModule().getDrivingEncoder().getPosition());
