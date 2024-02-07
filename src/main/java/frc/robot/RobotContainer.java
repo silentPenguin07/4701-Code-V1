@@ -3,6 +3,11 @@ package frc.robot;
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -10,11 +15,13 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.robot_subsystems.DriveSubsystem;
@@ -23,20 +30,38 @@ public class RobotContainer {
     
     public static final double GAMEPAD_AXIS_THRESHOLD = 0.2;
     private final SendableChooser<Command> autoChooser;
+    //private final SendableChooser<Command> sideChooser;
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-
+    private List<PathPlannerPath> pathGroup;
+    private Pose2d startingPose;
+    private Pose2d endingPose;
+    private PathPlannerPath path;
     
     Joystick driverGamepad = new Joystick(RobotConstants.Ports.CONTROLLER.JOYSTICK);
 
     // the container for the robot. contains subsystems, OI devices, commands
     public RobotContainer() {
+
+        //TODO: may have been overwritten?
+        //List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Example Path");
+        
+        //Pose2d startingPose = PathPlannerAuto.getStaringPoseFromAutoFile("Example Auto");
+
+        //TODO: Register commands
+
+        // build an auto chooser This will use Commands.none() as the default option
+        autoChooser = AutoBuilder.buildAutoChooser();
+        
+        // TODO: initialize sideChooser
+
         driveSubsystem.initialize();
 
         // configure the trigger bindings
         configureBindings();
 
-        autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+        SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Mode", autoChooser);
+
     }
     
     /**
@@ -51,15 +76,45 @@ public class RobotContainer {
    */
     private void configureBindings()
     {
-        // don't know the path as yet
+        // adds a button to run Example Path (CLICK THE BUTTON)
+        SmartDashboard.putData("Example Path", new PathPlannerAuto("Example Path"));
+
+        // on the fly path initiated by another button
+        // moves the robot 2m in the +X field direction
+        SmartDashboard.putData("On-the-fly path", Commands.runOnce(() ->
+        {
+            Pose2d currentPose = driveSubsystem.getPose();
+
+            // rotation component in these poses is the direction of travel
+            Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
+            Pose2d endPos = new Pose2d(currentPose.getTranslation().plus(new Translation2d(2.0, 0.0)),
+                new Rotation2d());
+
+            // gets the bezierPoints from start to end
+            List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);
+            PathPlannerPath path = new PathPlannerPath(
+                bezierPoints,
+                new PathConstraints(4.0,
+                4.0,
+                Units.degreesToRadians(360), 
+                Units.degreesToRadians(540)
+                ),
+                new GoalEndState(0.0, currentPose.getRotation())
+            );
+
+            //TODO: change for sendable chooser to choose Blue or red side.
+            path.preventFlipping = true;
+
+            AutoBuilder.followPath(path).schedule();
+        }
+        ));
     }
 
-    // passes the autonomous command to the Robot class
+    // passes the autonomous command to the main Robot class
     public Command getAutonomousCommand()
     {
         return autoChooser.getSelected();
     }
-
 
     public Trajectory createExampleTrajectory(TrajectoryConfig config) {
         Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
@@ -75,5 +130,5 @@ public class RobotContainer {
         return driveSubsystem;
     }
 
-    
+    // TODO: clear RIO of all old paths
 }
