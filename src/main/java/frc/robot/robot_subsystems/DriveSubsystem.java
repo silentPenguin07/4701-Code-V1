@@ -24,7 +24,7 @@ import entechlib.entech_subsystems.EntechSubsystem;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Robot;
+//import frc.robot.Robot;
 import frc.robot.RobotConstants;
 import frc.robot.RobotConstants.DrivetrainConstants;
 import frc.robot.robot_swerve.SwerveModule;
@@ -40,14 +40,19 @@ public class DriveSubsystem extends EntechSubsystem{
     public static final double REAR_LEFT_VIRTUAL_OFFSET_RADIANS = 5.80897935;
     public static final double REAR_RIGHT_VIRTUAL_OFFSET_RADIANS = 0.7840019;
 
-    public static final int GYRO_ORIENTATION = -1; // might be able to merge with kGyroReversed
+    public static final int GYRO_ORIENTATION = 1; // might be able to merge with kGyroReversed
 
     public static final double FIELD_LENGTH_INCHES = 54 * 12 + 1; // 54ft 1in
     public static final double FIELD_WIDTH_INCHES = 26 * 12 + 7; // 26ft 7in
 
     private Field2d field = new Field2d();
 
-    private SwerveDriveKinematics kinematics;
+    private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+        new Translation2d(0.4, 0.4),
+        new Translation2d(0.4, 0.4),
+        new Translation2d(0.4, 0.4),
+        new Translation2d(0.4, 0.4)
+    );
     
     private SwerveModule m_frontLeft;
     private SwerveModule m_frontRight;
@@ -69,6 +74,7 @@ public class DriveSubsystem extends EntechSubsystem{
     // constructor
     public DriveSubsystem()
     {
+        
         // autobuilder configuration
         AutoBuilder.configureHolonomic(
             this::getPose, // robot pose supplier

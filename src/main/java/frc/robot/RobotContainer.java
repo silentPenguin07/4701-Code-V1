@@ -3,11 +3,11 @@ package frc.robot;
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+//import com.pathplanner.lib.PathPlanner;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,7 +17,7 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+//import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,27 +32,21 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
     //private final SendableChooser<Command> sideChooser;
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    /*
     private List<PathPlannerPath> pathGroup;
     private Pose2d startingPose;
     private Pose2d endingPose;
     private PathPlannerPath path;
+    */
+    
     
     Joystick driverGamepad = new Joystick(RobotConstants.Ports.CONTROLLER.JOYSTICK);
 
     // the container for the robot. contains subsystems, OI devices, commands
     public RobotContainer() {
 
-        //TODO: may have been overwritten?
-        //List<PathPlannerPath> pathGroup = PathPlannerAuto.getPathGroupFromAutoFile("Example Path");
-        
-        //Pose2d startingPose = PathPlannerAuto.getStaringPoseFromAutoFile("Example Auto");
-
-        //TODO: Register commands
-
         // build an auto chooser This will use Commands.none() as the default option
         autoChooser = AutoBuilder.buildAutoChooser();
-        
-        // TODO: initialize sideChooser
 
         driveSubsystem.initialize();
 
@@ -65,7 +59,6 @@ public class RobotContainer {
     }
     
     /**
-     * TODO:
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
    * predicate, or via the named factories in {@link
@@ -77,7 +70,7 @@ public class RobotContainer {
     private void configureBindings()
     {
         // adds a button to run Example Path (CLICK THE BUTTON)
-        SmartDashboard.putData("Example Path", new PathPlannerAuto("Example Path"));
+        SmartDashboard.putData("Straight Path", new PathPlannerAuto("Straight Path"));
 
         // on the fly path initiated by another button
         // moves the robot 2m in the +X field direction
@@ -102,7 +95,7 @@ public class RobotContainer {
                 new GoalEndState(0.0, currentPose.getRotation())
             );
 
-            //TODO: change for sendable chooser to choose Blue or red side.
+            // change for sendable chooser to choose Blue or red side.
             path.preventFlipping = true;
 
             AutoBuilder.followPath(path).schedule();
@@ -130,5 +123,10 @@ public class RobotContainer {
         return driveSubsystem;
     }
 
-    // TODO: clear RIO of all old paths
+    // TODO: Voltage to percent output needs to be implemented
+    /*
+    public static double voltageToPercentOutput(double voltage) {
+        return MathUtil.clamp(voltage/Math.min(12, getPowerDistributionInstance().getVoltage()), -1, 1);
+    }
+    */
 }

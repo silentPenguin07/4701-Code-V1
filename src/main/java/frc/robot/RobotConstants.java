@@ -1,15 +1,11 @@
 package frc.robot;
 
 import com.revrobotics.CANSparkBase.IdleMode;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
-
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.PIDConstants;
-import com.pathplanner.lib.util.ReplanningConfig;
-
-import edu.wpi.first.math.geometry.Translation2d;
 
 public final class RobotConstants {
 
@@ -130,6 +126,77 @@ public final class RobotConstants {
             public static final double JOYSTICK_AXIS_THRESHOLD = 0.2;
             public static final int JOYSTICK = 0;
             public static final int PANEL = 1;
+        }
+    }
+
+    /*
+    // TODO: Might need these later
+    public static class AutoConstants 
+    {
+        // PID constants for path planner (these control drive direction not reaching target wheel speeds)
+		public static final double PathPlannerP = .5;
+		public static final double PathPlannerI = 0;
+		public static final double PathPlannerD = 0;
+        public static final double PathPlannerTurnP = .8;
+		public static final double PathPlannerTurnI = 0;
+		public static final double PathPlannerTurnD = 0;
+    }
+    */
+
+    /*
+     * constants pertaining to the arm
+     */
+    public static class ArmConstants
+    {
+        // TODO: need to be changed
+        public static final double ARM_LENGTH = 10; // TODO: MEASURE THE ARM
+        public static final Rotation2d ARM_OFFSET_DEGREES = Rotation2d.fromDegrees(-153.4);
+        public static final double SPOOL_DIAMETER = Units.inchesToMeters(2.0);
+        public static final double DISTANCE_PER_SPOOL_REVOLUTION_METERS = SPOOL_DIAMETER * Math.PI;
+        public static final double SPOOL_ROTATIONS_PER_METER = 1/DISTANCE_PER_SPOOL_REVOLUTION_METERS;
+        public static final double FALCON_ROTATIONS_PER_SPOOL = 27.0;
+        public static final double PULSES_PER_FALCON_ROTATION = 2048;
+        public static final double PULSES_PER_METER_EXTENSION = SPOOL_ROTATIONS_PER_METER * FALCON_ROTATIONS_PER_SPOOL * PULSES_PER_FALCON_ROTATION;
+
+        public static final class RotationGains
+        {
+            // TODO: need to be changed
+            public static final double kGPercent = 0.075;
+            public static final Rotation2d TOLERANCE= Rotation2d.fromDegrees(2.5);
+            //public static final double kP = 8.0735;
+            public static final double kP = 2.9;
+            public static final double kI = 0;
+            public static final double kD = 0.50318; //1.7543;
+            public static final double kF = 0;
+            public static final double kS = 0.1181;
+            //public static final double kG = 0.32446;
+            public static final double kG = 0.4;
+            public static final double kV = 3.4;
+            public static final double kA = 0.044465;
+
+            /* TODO: determine whether this is needed
+            public static final double kSExtended = 0.019459;
+            public static final double kGExtended = 0.68405;
+            public static final double kVExtended = 3.722;
+            public static final double kAExtended = 0.088359;
+            */
+        }
+        
+        // TODO: values need to be changed
+        public static final class RotationConstraints 
+        {
+            public static final double MAX_ROTATION_VELOCITY_RPS = 3 * Math.PI / 2;
+            public static final double MAX_ROTATION_ACCELERATION_RPSPS = MAX_ROTATION_VELOCITY_RPS * 3;
+        }
+
+        public static final class RotationSetpoints {
+            //in degrees initially, conv to rad
+            public static final double LOW_RADIANS = Units.degreesToRadians(338.1);
+            public static final double MID_RADIANS = Units.degreesToRadians(51);
+            public static final double HIGH_RADIANS = Units.degreesToRadians(49);
+            public static final double DOUBLE_SUBSTATION_RADIANS = Units.degreesToRadians(69.5);
+    
+            public static final double GROUND_CONE_RADIANS = Units.degreesToRadians(342.1);
         }
     }
 
