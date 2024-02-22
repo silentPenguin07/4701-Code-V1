@@ -9,6 +9,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 //import com.pathplanner.lib.PathPlanner;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -17,6 +18,8 @@ import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 //import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -40,7 +43,8 @@ public class RobotContainer {
     */
     
     
-    Joystick driverGamepad = new Joystick(RobotConstants.Ports.CONTROLLER.JOYSTICK);
+    Joystick driverGamepad = new Joystick(RobotConstants.Ports.CONTROLLER.DRIVER_JOYSTICK);
+    Joystick armJoystick = new Joystick(RobotConstants.Ports.CONTROLLER.ARM_JOYSTICK);
 
     // the container for the robot. contains subsystems, OI devices, commands
     public RobotContainer() {
@@ -55,6 +59,15 @@ public class RobotContainer {
 
         SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Mode", autoChooser);
+
+    }
+
+    /*
+     * Defines XBOX Controller command mappings
+     */
+    private void configureButtonBindings()
+    {
+        // TODO: Implement xbox controller button bindings
 
     }
     
@@ -122,9 +135,9 @@ public class RobotContainer {
     public DriveSubsystem getDriveSubsystem() {
         return driveSubsystem;
     }
-
-    // TODO: Voltage to percent output needs to be implemented
     /*
+    // TODO: Voltage to percent output needs to be implemented
+    
     public static double voltageToPercentOutput(double voltage) {
         return MathUtil.clamp(voltage/Math.min(12, getPowerDistributionInstance().getVoltage()), -1, 1);
     }

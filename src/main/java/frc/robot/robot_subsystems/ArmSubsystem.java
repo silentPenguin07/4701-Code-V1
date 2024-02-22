@@ -1,5 +1,8 @@
 package frc.robot.robot_subsystems;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
@@ -79,7 +82,7 @@ public class ArmSubsystem extends SubsystemBase
     }
 
 
-    // instiance data
+    // instance data
     private Spark m_rotationMotorController;
     private final Constraints m_rotationConstraints = new Constraints(RotationConstraints.MAX_ROTATION_VELOCITY_RPS, RotationConstraints.MAX_ROTATION_ACCELERATION_RPSPS);
     private final PIDController m_rotationPIDController = new PIDController(RotationGains.kP, RotationGains.kI, RotationGains.kD);
@@ -103,9 +106,16 @@ public class ArmSubsystem extends SubsystemBase
         inv.setInverted(true);
         m_rotationMotorController.addFollower(inv);
 
+        m_rotationPIDController.enableContinuousInput(0, 2 * Math.PI);
+        m_rotationPIDController.setTolerance(RotationGains.TOLERANCE.getRadians());
+
+        isOpenLoopRotation = false;
+
         m_angle_encoder.setInverted(true);
         m_angle_encoder.setOffset(ArmConstants.ARM_OFFSET_DEGREES);
         setAngleSetpointRadians(getArmAngleRadians());
+
+        SmartDashboard.putData("Arm Rotation PID Controller", m_rotationPIDController);
     }
 
     public PIDController getRotationPidController()
@@ -122,7 +132,18 @@ public class ArmSubsystem extends SubsystemBase
     {
         SmartDashboard.putNumber("RotateRotercent", percent);
 
-        // open loop rotation stuff
+        if (percent == 0.0)
+        {
+            if (isOpenLoopRotation)
+            {
+                hold();
+            }
+            else
+            {
+                isOpenLoopRotation = true;
+                m_rotationMotorController.set(0.4);
+            }
+        }
     }
 
     public void rotateClosedLoop(double velocity)
@@ -132,21 +153,16 @@ public class ArmSubsystem extends SubsystemBase
             isOpenLoopRotation = false;
             SmartDashboard.putNumber("OUTPUT", velocity);
             double feedForward = m_rotationFeedforward.calculate(getArmAngleRadians(), velocity);
-
-            // TODO: Do calculations for feed forward, output and apply to motor percent output
-            //double extendedFeedForward = m_rotationFeedforwardExtended.calculate(getArmAngleRadians(), velocity);
             
-            //double finalFF = MathUtil.interpolate(feedForward, ArmConstants.ARM_LENGTH);
-            
-            //SmartDashboard.putNumber("FeedForward", combinedFF);
-            //SmartDashboard.putNumber("Voltage", RobotContainer.voltageToPercentOutput(combinedFF));
-            //m_rotationMotorController.set(ControlMode.PercentOutput, RobotContainer.voltageToPercentOutput(combinedFF));
+            SmartDashboard.putNumber("FeedForward", feedForward);
+            //SmartDashboard.putNumber("Voltage", RobotContainer.voltageToPercentOutput(feedForward));
+            //m_rotationMotorController.set(RobotContainer.voltageToPercentOutput(feedForward));
+            m_rotationMotorController.set(0.4);
         }
 
         else
         {
             m_rotationMotorController.set(0);
-            // m_rotationMotorController.set(RobotContainer.voltageToPercentOutput());
         }
     }
 

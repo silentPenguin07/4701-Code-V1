@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class OperatorInterface {
 
-        private final XboxController driveJoystick = new XboxController(RobotConstants.Ports.CONTROLLER.JOYSTICK);
-        
+        private final XboxController driveJoystick = new XboxController(RobotConstants.Ports.CONTROLLER.DRIVER_JOYSTICK);
+        private final XboxController armJoystick = new XboxController(RobotConstants.Ports.CONTROLLER.ARM_JOYSTICK);
 
         public OperatorInterface(CommandFactory commandFactory, RobotContainer robotContainer) {
                 
