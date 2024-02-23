@@ -1,9 +1,5 @@
 package frc.robot.robot_subsystems;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
-
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -17,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants.ArmConstants;
 import frc.robot.RobotConstants.ArmConstants.*;
-import frc.robot.RobotContainer;
 
 
 public class ArmSubsystem extends SubsystemBase
@@ -86,9 +81,8 @@ public class ArmSubsystem extends SubsystemBase
     private Spark m_rotationMotorController;
     private final Constraints m_rotationConstraints = new Constraints(RotationConstraints.MAX_ROTATION_VELOCITY_RPS, RotationConstraints.MAX_ROTATION_ACCELERATION_RPSPS);
     private final PIDController m_rotationPIDController = new PIDController(RotationGains.kP, RotationGains.kI, RotationGains.kD);
-    // TODO: Should be changed
-    private final RevThroughBoreEncoder m_angle_encoder = new RevThroughBoreEncoder(0); // diochannel needs to be looked at
-    private ArmFeedforward m_rotationFeedforward = new ArmFeedforward(ArmConstants.ARM_LENGTH, RotationGains.kG, RotationGains.kV); // TODO: Arm length
+    private final RevThroughBoreEncoder m_angle_encoder = new RevThroughBoreEncoder(0); // TODO: diochannel needs to be looked at
+    private ArmFeedforward m_rotationFeedforward = new ArmFeedforward(ArmConstants.ARM_LENGTH, RotationGains.kG, RotationGains.kV);
     private double angleSetPointRadians;
     private boolean isOpenLoopRotation = true;
 

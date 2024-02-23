@@ -192,9 +192,9 @@ public final class RobotConstants {
 
         public static final class RotationSetpoints {
             //in degrees initially, conv to rad
-            public static final double LOW_RADIANS = Units.degreesToRadians(338.1);
-            public static final double MID_RADIANS = Units.degreesToRadians(51);
-            public static final double HIGH_RADIANS = Units.degreesToRadians(49);
+            public static final double LOW_RADIANS = Units.degreesToRadians(-14.839);
+            public static final double MID_RADIANS = Units.degreesToRadians(115);
+            public static final double HIGH_RADIANS = Units.degreesToRadians(49); // TODO: Change this
             public static final double DOUBLE_SUBSTATION_RADIANS = Units.degreesToRadians(69.5);
     
             public static final double GROUND_CONE_RADIANS = Units.degreesToRadians(342.1);
