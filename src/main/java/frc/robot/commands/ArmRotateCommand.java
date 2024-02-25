@@ -2,61 +2,58 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.XboxController;
-import entechlib.commands.EntechCommand;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.robot_subsystems.ArmSubsystem;
-import frc.robot.RobotConstants.ArmConstants.RotationSetpoints;;
+import frc.robot.RobotConstants.ArmConstants.RotationSetpoints;
+import frc.robot.robot_subsystems.ControllerInput;
 
-public class ArmRotateCommand extends EntechCommand {
+public class ArmRotateCommand extends Command {
     
     private ArmSubsystem m_arm;
     //private double m_angleRadians;
-    private final XboxController joystick;
 
     // constructor
-    public ArmRotateCommand(ArmSubsystem arm, /*double angleRadians,*/ XboxController joystick)
+    public ArmRotateCommand(ArmSubsystem arm /*XboxController joystick*/)
     {
         this.m_arm = arm;
         //this.m_angleRadians = angleRadians;
-        this.joystick = joystick;
     }
 
     // called when command is initially scheduled
-    public void initialize()
+    public void initialize(String input)
     {
         m_arm.getRotationPidController().reset();
         PIDController rotationController = m_arm.getRotationPidController();
 
         // set arm to 0 position
-        rotationController.setSetpoint(Units.degreesToRadians(0));
-    }
-
-    // called every time thje scheduler runs while the command is scheduled
-    public void execute()
-    {
-        PIDController rotationController = m_arm.getRotationPidController();
         
 
         // move to low position
-        if (joystick.getAButtonPressed())
+        if (input.equals("A"))
         {
             rotationController.setSetpoint(RotationSetpoints.LOW_RADIANS);
-            m_arm.rotateClosedLoop(rotationController.calculate(m_arm.getArmAngleRadians()));
+            //m_arm.rotateClosedLoop(rotationController.calculate(m_arm.getArmAngleRadians()));
         }
         
         // move to mid position
-        else if (joystick.getBButtonPressed())
+        else if (input.equals("B"))
         {
-            rotationController.setSetpoint(RotationSetpoints.LOW_RADIANS);
-            m_arm.rotateClosedLoop(rotationController.calculate(m_arm.getArmAngleRadians()));
+            rotationController.setSetpoint(RotationSetpoints.MID_RADIANS);
+            //m_arm.rotateClosedLoop(rotationController.calculate(m_arm.getArmAngleRadians()));
         }
 
         // move to high position
-        else if (joystick.getXButtonPressed())
+        else if (input.equals("X"))
         {
-            rotationController.setSetpoint(RotationSetpoints.LOW_RADIANS);
-            m_arm.rotateClosedLoop(rotationController.calculate(m_arm.getArmAngleRadians()));
+            rotationController.setSetpoint(RotationSetpoints.HIGH_RADIANS);
+            //m_arm.rotateClosedLoop(rotationController.calculate(m_arm.getArmAngleRadians()));
         }
+    }
+
+    // called every time thje scheduler runs while the command is scheduled
+    public void execute(String input)
+    {
+        
     }
 
     // calle once the command ends or is interrupted

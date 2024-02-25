@@ -7,12 +7,14 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 //import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotConstants.ArmConstants;
 import frc.robot.RobotConstants.ArmConstants.*;
+import frc.robot.commands.ArmRotateCommand;
 
 
 public class ArmSubsystem extends SubsystemBase
@@ -78,10 +80,10 @@ public class ArmSubsystem extends SubsystemBase
 
 
     // instance data
-    private Spark m_rotationMotorController;
+    private Spark m_rotationMotorController = new Spark(0);
     private final Constraints m_rotationConstraints = new Constraints(RotationConstraints.MAX_ROTATION_VELOCITY_RPS, RotationConstraints.MAX_ROTATION_ACCELERATION_RPSPS);
     private final PIDController m_rotationPIDController = new PIDController(RotationGains.kP, RotationGains.kI, RotationGains.kD);
-    private final RevThroughBoreEncoder m_angle_encoder = new RevThroughBoreEncoder(0); // TODO: diochannel needs to be looked at
+    private final RevThroughBoreEncoder m_angle_encoder = new RevThroughBoreEncoder(0);
     private ArmFeedforward m_rotationFeedforward = new ArmFeedforward(ArmConstants.ARM_LENGTH, RotationGains.kG, RotationGains.kV);
     private double angleSetPointRadians;
     private boolean isOpenLoopRotation = true;
@@ -93,10 +95,9 @@ public class ArmSubsystem extends SubsystemBase
         rightArm = new Spark(6);
         rightArm.setInverted(true);
         */
-        m_rotationMotorController.addFollower(new Spark(5));
 
         // inverted motor (easier to make separately)
-        Spark inv = new Spark(6);
+        Spark inv = new Spark(1);
         inv.setInverted(true);
         m_rotationMotorController.addFollower(inv);
 
@@ -119,6 +120,7 @@ public class ArmSubsystem extends SubsystemBase
 
     public Command rotateToCommand(Rotation2d angle)
     {
+        m_rotationMotorController.set(0.4);
         return runOnce(() -> setAngleSetpointRadians(angle.getRadians()));
     }
 
@@ -173,6 +175,11 @@ public class ArmSubsystem extends SubsystemBase
     public void setAngleSetpointRadians(double angleSetpoint)
     {
         this.angleSetPointRadians = angleSetpoint;
+    }
+
+    public void setSetpoint(double Setpoint)
+    {
+        m_rotationPIDController.setSetpoint(Setpoint);
     }
 
     public void hold()

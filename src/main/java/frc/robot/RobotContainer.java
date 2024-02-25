@@ -19,6 +19,7 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 //import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -27,6 +28,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ArmRotateCommand;
+import frc.robot.robot_subsystems.ArmSubsystem;
+import frc.robot.robot_subsystems.ControllerInput;
 import frc.robot.robot_subsystems.DriveSubsystem;
 
 public class RobotContainer {
@@ -35,6 +39,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
     //private final SendableChooser<Command> sideChooser;
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    private final ArmSubsystem armSubsystem = new ArmSubsystem();
     /*
     private List<PathPlannerPath> pathGroup;
     private Pose2d startingPose;
@@ -44,11 +49,11 @@ public class RobotContainer {
     
     
     Joystick driverGamepad = new Joystick(RobotConstants.Ports.CONTROLLER.DRIVER_JOYSTICK);
-    Joystick armJoystick = new Joystick(RobotConstants.Ports.CONTROLLER.ARM_JOYSTICK);
 
     // the container for the robot. contains subsystems, OI devices, commands
     public RobotContainer() {
 
+        configureButtonBindings();
         // build an auto chooser This will use Commands.none() as the default option
         autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -62,13 +67,40 @@ public class RobotContainer {
 
     }
 
-    /*
-     * Defines XBOX Controller command mappings
-     */
     private void configureButtonBindings()
     {
-        // TODO: Implement xbox controller button bindings
+        if (ControllerInput.getA())
+        {
+            new ArmRotateCommand(armSubsystem).initialize("A");;
+        }
 
+        if (ControllerInput.getB())
+        {
+            new ArmRotateCommand(armSubsystem).initialize("B");;
+        }
+
+        if (ControllerInput.getX())
+        {
+            new ArmRotateCommand(armSubsystem).initialize("X");
+        }
+    }
+
+    public void readButtons()
+    {
+        if (ControllerInput.getA())
+        {
+            new ArmRotateCommand(armSubsystem).initialize("A");;
+        }
+
+        if (ControllerInput.getB())
+        {
+            new ArmRotateCommand(armSubsystem).initialize("B");;
+        }
+
+        if (ControllerInput.getX())
+        {
+            new ArmRotateCommand(armSubsystem).initialize("X");
+        }
     }
     
     /**
@@ -135,6 +167,12 @@ public class RobotContainer {
     public DriveSubsystem getDriveSubsystem() {
         return driveSubsystem;
     }
+
+    public ArmSubsystem getArmSubsystem()
+    {
+        return armSubsystem;
+    }
+
     /*
     // TODO: Voltage to percent output needs to be implemented
     
