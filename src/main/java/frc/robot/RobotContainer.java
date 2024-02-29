@@ -49,11 +49,12 @@ public class RobotContainer {
     
     
     Joystick driverGamepad = new Joystick(RobotConstants.Ports.CONTROLLER.DRIVER_JOYSTICK);
+    XboxController armGamepad = new XboxController(RobotConstants.Ports.CONTROLLER.ARM_JOYSTICK);
 
     // the container for the robot. contains subsystems, OI devices, commands
     public RobotContainer() {
 
-        configureButtonBindings();
+        
         // build an auto chooser This will use Commands.none() as the default option
         autoChooser = AutoBuilder.buildAutoChooser();
 
@@ -62,6 +63,9 @@ public class RobotContainer {
         // configure the trigger bindings
         configureBindings();
 
+        // configure button bindings
+        configureButtonBindings();
+
         SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Mode", autoChooser);
 
@@ -69,38 +73,16 @@ public class RobotContainer {
 
     private void configureButtonBindings()
     {
-        if (ControllerInput.getA())
+        /* 
+        if (armGamepad.getAButtonPressed())
         {
-            new ArmRotateCommand(armSubsystem).initialize("A");;
+            new ArmRotateCommand(armSubsystem, RobotConstants.ArmConstants.RotationSetpoints.LOW_RADIANS);
         }
 
-        if (ControllerInput.getB())
+        else if (armGamepad.getBButtonPressed())
         {
-            new ArmRotateCommand(armSubsystem).initialize("B");;
-        }
-
-        if (ControllerInput.getX())
-        {
-            new ArmRotateCommand(armSubsystem).initialize("X");
-        }
-    }
-
-    public void readButtons()
-    {
-        if (ControllerInput.getA())
-        {
-            new ArmRotateCommand(armSubsystem).initialize("A");;
-        }
-
-        if (ControllerInput.getB())
-        {
-            new ArmRotateCommand(armSubsystem).initialize("B");;
-        }
-
-        if (ControllerInput.getX())
-        {
-            new ArmRotateCommand(armSubsystem).initialize("X");
-        }
+            new ArmRotateCommand(armSubsystem, RobotConstants.ArmConstants.RotationSetpoints.HIGH_RADIANS);
+        }*/
     }
     
     /**

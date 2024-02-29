@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.OI.OperatorInterface;
 import frc.robot.commands.ArmRotateCommand;
+import frc.robot.robot_subsystems.ArmSubsystem;
 
 public class Robot extends TimedRobot{
     private Command m_autonomousCommand;
@@ -12,12 +13,16 @@ public class Robot extends TimedRobot{
     private CommandFactory m_commandFactory;
     private OperatorInterface m_operatorInterface;
 
+    private final ArmSubsystem armSubsystem = new ArmSubsystem();
+    private Command armCommand;
+
     @Override
     public void robotInit() {
         m_robotContainer = new RobotContainer();
         m_commandFactory = new CommandFactory(m_robotContainer);
         m_operatorInterface = new OperatorInterface(m_commandFactory, m_robotContainer);
 
+        armCommand = new ArmRotateCommand(armSubsystem, RobotConstants.ArmConstants.RotationSetpoints.LOW_RADIANS);
 
         //SmartDashboard.putData("Swerve Odometry", m_robotContainer.getField());
     }
@@ -41,6 +46,7 @@ public class Robot extends TimedRobot{
         // and running subsystem periodic() methods. This must be called from the
         // robot's periodic
         // block in order for anything in the Command-based framework to work.
+        armSubsystem.periodic();
         CommandScheduler.getInstance().run();
     }
 
@@ -69,7 +75,6 @@ public class Robot extends TimedRobot{
     @Override
     public void teleopPeriodic() {
         updateToSmartDash();
-        m_robotContainer.readButtons();
     }
 
     // autonomous runs the autonomous command selected by your {@link RobotContainer} class

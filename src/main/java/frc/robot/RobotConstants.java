@@ -150,15 +150,19 @@ public final class RobotConstants {
     public static class ArmConstants
     {
         // TODO: need to be changed
-        public static final double ARM_LENGTH = 10; // TODO: MEASURE THE ARM
-        public static final Rotation2d ARM_OFFSET_DEGREES = Rotation2d.fromDegrees(-153.4);
+        public static final double ARM_LENGTH = Units.inchesToMeters(33.25); // TODO: MEASURE THE ARM
+        public static final Rotation2d ARM_OFFSET_DEGREES = Rotation2d.fromDegrees(277);
+        public static final double ARM_RATIO = 0.96;
+        
+        /*
         public static final double SPOOL_DIAMETER = Units.inchesToMeters(2.0);
         public static final double DISTANCE_PER_SPOOL_REVOLUTION_METERS = SPOOL_DIAMETER * Math.PI;
         public static final double SPOOL_ROTATIONS_PER_METER = 1/DISTANCE_PER_SPOOL_REVOLUTION_METERS;
+        
         public static final double FALCON_ROTATIONS_PER_SPOOL = 27.0;
         public static final double PULSES_PER_FALCON_ROTATION = 2048;
         public static final double PULSES_PER_METER_EXTENSION = SPOOL_ROTATIONS_PER_METER * FALCON_ROTATIONS_PER_SPOOL * PULSES_PER_FALCON_ROTATION;
-
+        */
         public static final class RotationGains
         {
             // TODO: need to be changed
@@ -174,13 +178,6 @@ public final class RobotConstants {
             public static final double kG = 0.4;
             public static final double kV = 3.4;
             public static final double kA = 0.044465;
-
-            /* TODO: determine whether this is needed
-            public static final double kSExtended = 0.019459;
-            public static final double kGExtended = 0.68405;
-            public static final double kVExtended = 3.722;
-            public static final double kAExtended = 0.088359;
-            */
         }
         
         // TODO: values need to be changed
@@ -191,13 +188,13 @@ public final class RobotConstants {
         }
 
         public static final class RotationSetpoints {
-            //in degrees initially, conv to rad
+            // in degrees initially, conv to rad
             public static final double LOW_RADIANS = Units.degreesToRadians(-14.839);
             public static final double MID_RADIANS = Units.degreesToRadians(115);
             public static final double HIGH_RADIANS = Units.degreesToRadians(49); // TODO: Change this
-            public static final double DOUBLE_SUBSTATION_RADIANS = Units.degreesToRadians(69.5);
+            // public static final double DOUBLE_SUBSTATION_RADIANS = Units.degreesToRadians(69.5);
     
-            public static final double GROUND_CONE_RADIANS = Units.degreesToRadians(342.1);
+            // public static final double GROUND_CONE_RADIANS = Units.degreesToRadians(342.1);
         }
     }
 

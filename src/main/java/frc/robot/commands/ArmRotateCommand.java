@@ -9,63 +9,50 @@ import frc.robot.robot_subsystems.ControllerInput;
 
 public class ArmRotateCommand extends Command {
     
-    private ArmSubsystem m_arm;
-    //private double m_angleRadians;
+    private final ArmSubsystem m_arm;
+    private final double position; // in degrees
 
     // constructor
-    public ArmRotateCommand(ArmSubsystem arm /*XboxController joystick*/)
+
+    // precondition: pos is a degree value
+
+    public ArmRotateCommand(ArmSubsystem arm, double pos)
     {
         this.m_arm = arm;
-        //this.m_angleRadians = angleRadians;
+        position = pos;
+        addRequirements(m_arm);
     }
 
     // called when command is initially scheduled
-    public void initialize(String input)
+    public void initialize()
     {
-        m_arm.getRotationPidController().reset();
-        PIDController rotationController = m_arm.getRotationPidController();
-
-        // set arm to 0 position
-        
-
-        // move to low position
-        if (input.equals("A"))
-        {
-            rotationController.setSetpoint(RotationSetpoints.LOW_RADIANS);
-            //m_arm.rotateClosedLoop(rotationController.calculate(m_arm.getArmAngleRadians()));
-        }
-        
-        // move to mid position
-        else if (input.equals("B"))
-        {
-            rotationController.setSetpoint(RotationSetpoints.MID_RADIANS);
-            //m_arm.rotateClosedLoop(rotationController.calculate(m_arm.getArmAngleRadians()));
-        }
-
-        // move to high position
-        else if (input.equals("X"))
-        {
-            rotationController.setSetpoint(RotationSetpoints.HIGH_RADIANS);
-            //m_arm.rotateClosedLoop(rotationController.calculate(m_arm.getArmAngleRadians()));
-        }
+        System.out.println("Setting arm to " + position);
+        m_arm.armBrake();
     }
 
-    // called every time thje scheduler runs while the command is scheduled
-    public void execute(String input)
+    // called every time the scheduler runs while the command is scheduled
+    public void execute()
     {
-        
+        if (m_arm.getArmAngleDegrees() < m_arm.getAngleSetpointDegrees())
+        {
+            m_arm.armForward();
+        }
+        else
+        {
+            m_arm.armBackward();
+        }
     }
 
     // calle once the command ends or is interrupted
     public void end(boolean interrupted)
     {
-        m_arm.hold();
+        m_arm.armBrake();
     }
 
     // returns true when the command should end
     public boolean isFinished()
     {
-        return m_arm.getRotationPidController().atSetpoint();
+        return m_arm.atSetpoint();
     }
 
 }

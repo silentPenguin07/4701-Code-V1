@@ -21,10 +21,4 @@ public class CommandFactory{
     public EntechCommand gyroResetCommand() {
         return new GyroReset(driveSubsystem);
     }
-
-    public Command defaultRotate()
-    {
-        return armSubsystem.
-            rotateToCommand(new Rotation2d(RobotConstants.ArmConstants.RotationSetpoints.HIGH_RADIANS));
-    }
 }

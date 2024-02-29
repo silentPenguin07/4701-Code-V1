@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.CommandFactory;
+import frc.robot.Robot;
 import frc.robot.RobotConstants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ArmRotateCommand;
@@ -15,6 +16,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class OperatorInterface {
 
         private final XboxController driveJoystick = new XboxController(RobotConstants.Ports.CONTROLLER.DRIVER_JOYSTICK);
+        private final XboxController armController = new XboxController(RobotConstants.Ports.CONTROLLER.ARM_JOYSTICK);
+
+        private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
         public OperatorInterface(CommandFactory commandFactory, RobotContainer robotContainer) {
                 
@@ -25,7 +29,7 @@ public class OperatorInterface {
                 robotContainer.getDriveSubsystem()
                                 .setDefaultCommand(new DriveCommand(robotContainer.getDriveSubsystem(), driveJoystick));
                 
-                robotContainer.getArmSubsystem()
-                                .setDefaultCommand(commandFactory.defaultRotate());
+                new JoystickButton(armController, 2).onTrue(new ArmRotateCommand(armSubsystem, RobotConstants.ArmConstants.RotationSetpoints.LOW_RADIANS));
+                new JoystickButton(armController, 3).onTrue(new ArmRotateCommand(armSubsystem, RobotConstants.ArmConstants.RotationSetpoints.HIGH_RADIANS));
         }
 }
