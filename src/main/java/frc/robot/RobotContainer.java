@@ -28,10 +28,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commands.ArmRotateCommand;
 import frc.robot.robot_subsystems.ArmSubsystem;
-import frc.robot.robot_subsystems.ControllerInput;
 import frc.robot.robot_subsystems.DriveSubsystem;
+import frc.robot.robot_subsystems.ShooterIntakeSubsystem;
 
 public class RobotContainer {
     
@@ -40,6 +39,7 @@ public class RobotContainer {
     //private final SendableChooser<Command> sideChooser;
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
     private final ArmSubsystem armSubsystem = new ArmSubsystem();
+    //private final ShooterIntakeSubsystem shooterIntakeSubsystem = new ShooterIntakeSubsystem();
     /*
     private List<PathPlannerPath> pathGroup;
     private Pose2d startingPose;
@@ -73,16 +73,7 @@ public class RobotContainer {
 
     private void configureButtonBindings()
     {
-        /* 
-        if (armGamepad.getAButtonPressed())
-        {
-            new ArmRotateCommand(armSubsystem, RobotConstants.ArmConstants.RotationSetpoints.LOW_RADIANS);
-        }
-
-        else if (armGamepad.getBButtonPressed())
-        {
-            new ArmRotateCommand(armSubsystem, RobotConstants.ArmConstants.RotationSetpoints.HIGH_RADIANS);
-        }*/
+        
     }
     
     /**
@@ -154,6 +145,11 @@ public class RobotContainer {
     {
         return armSubsystem;
     }
+    /* 
+    public ShooterIntakeSubsystem getShooterIntakeSubsystem()
+    {
+        return shooterIntakeSubsystem;
+    } */
 
     /*
     // TODO: Voltage to percent output needs to be implemented

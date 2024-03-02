@@ -9,6 +9,7 @@ import frc.robot.RobotConstants;
 import frc.robot.RobotContainer;
 import frc.robot.commands.ArmRotateCommand;
 import frc.robot.commands.DriveCommand;
+import frc.robot.commands.ShootIntakeCommand;
 import frc.robot.commands.XCommand;
 import frc.robot.robot_subsystems.ArmSubsystem;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -17,8 +18,6 @@ public class OperatorInterface {
 
         private final XboxController driveJoystick = new XboxController(RobotConstants.Ports.CONTROLLER.DRIVER_JOYSTICK);
         private final XboxController armController = new XboxController(RobotConstants.Ports.CONTROLLER.ARM_JOYSTICK);
-
-        private final ArmSubsystem armSubsystem = new ArmSubsystem();
 
         public OperatorInterface(CommandFactory commandFactory, RobotContainer robotContainer) {
                 
@@ -29,7 +28,10 @@ public class OperatorInterface {
                 robotContainer.getDriveSubsystem()
                                 .setDefaultCommand(new DriveCommand(robotContainer.getDriveSubsystem(), driveJoystick));
                 
-                new JoystickButton(armController, 2).onTrue(new ArmRotateCommand(armSubsystem, RobotConstants.ArmConstants.RotationSetpoints.LOW_RADIANS));
-                new JoystickButton(armController, 3).onTrue(new ArmRotateCommand(armSubsystem, RobotConstants.ArmConstants.RotationSetpoints.HIGH_RADIANS));
+
+                new JoystickButton(armController, 2).onTrue(new ArmRotateCommand(robotContainer.getArmSubsystem(), RobotConstants.ArmConstants.RotationSetpoints.LOW_RADIANS));
+                new JoystickButton(armController, 3).onTrue(new ArmRotateCommand(robotContainer.getArmSubsystem(), RobotConstants.ArmConstants.RotationSetpoints.HIGH_RADIANS));
+                //new JoystickButton(armController, 5).onTrue(new ShootIntakeCommand(robotContainer.getShooterIntakeSubsystem(), true));
+                //new JoystickButton(armController, 6).onTrue(new ShootIntakeCommand(robotContainer.getShooterIntakeSubsystem(), false));
         }
 }

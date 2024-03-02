@@ -151,8 +151,8 @@ public final class RobotConstants {
     {
         // TODO: need to be changed
         public static final double ARM_LENGTH = Units.inchesToMeters(33.25); // TODO: MEASURE THE ARM
-        public static final Rotation2d ARM_OFFSET_DEGREES = Rotation2d.fromDegrees(277);
-        public static final double ARM_RATIO = 0.96;
+        public static final Rotation2d ARM_OFFSET_DEGREES = Rotation2d.fromDegrees(0);
+        public static final double ARM_RATIO = 1; // TODO: change this
         
         /*
         public static final double SPOOL_DIAMETER = Units.inchesToMeters(2.0);
@@ -189,9 +189,9 @@ public final class RobotConstants {
 
         public static final class RotationSetpoints {
             // in degrees initially, conv to rad
-            public static final double LOW_RADIANS = Units.degreesToRadians(-14.839);
+            public static final double LOW_RADIANS = Units.degreesToRadians(1);
             public static final double MID_RADIANS = Units.degreesToRadians(115);
-            public static final double HIGH_RADIANS = Units.degreesToRadians(49); // TODO: Change this
+            public static final double HIGH_RADIANS = Units.degreesToRadians(90); // TODO: Change this
             // public static final double DOUBLE_SUBSTATION_RADIANS = Units.degreesToRadians(69.5);
     
             // public static final double GROUND_CONE_RADIANS = Units.degreesToRadians(342.1);

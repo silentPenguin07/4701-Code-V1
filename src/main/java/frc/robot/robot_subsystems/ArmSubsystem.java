@@ -24,10 +24,11 @@ public class ArmSubsystem extends SubsystemBase
     
     private final Constraints m_rotationConstraints = new Constraints(RotationConstraints.MAX_ROTATION_VELOCITY_RPS, RotationConstraints.MAX_ROTATION_ACCELERATION_RPSPS);
     private final PIDController m_rotationPIDController = new PIDController(RotationGains.kP, RotationGains.kI, RotationGains.kD);
-    private final RevThroughBoreEncoder m_angle_encoder = new RevThroughBoreEncoder(0);
+    private final RevThroughBoreEncoder m_angle_encoder = new RevThroughBoreEncoder(1);
     private ArmFeedforward m_rotationFeedforward = new ArmFeedforward(ArmConstants.ARM_LENGTH, RotationGains.kG, RotationGains.kV);
-    private double angleSetPointRadians;
     private boolean isOpenLoopRotation = true;
+
+    private double angleSetPoint;
 
     private Spark m_right;
     private Spark m_left;
@@ -55,8 +56,9 @@ public class ArmSubsystem extends SubsystemBase
 
     public void armForward()
     {
+        
         m_right.set(0.4 / ArmConstants.ARM_RATIO);
-        m_left.set(-0.4 * ArmConstants.ARM_RATIO);
+        m_left.set(-0.4 * ArmConstants.ARM_RATIO); 
     }
 
     public void armBackward()
@@ -71,12 +73,23 @@ public class ArmSubsystem extends SubsystemBase
         m_left.set(0);
     }
 
+    public double getAngleSetPoint()
+    {
+        return angleSetPoint;
+    }
+
+    public void setAngleSetpoint(double setpoint)
+    {
+        angleSetPoint = setpoint;
+        System.out.println("THE ANGLE WAS SET TO: " + angleSetPoint);
+    }
+
     public boolean atSetpoint()
     {
         double currentAngle = getArmAngleDegrees();
-        double target = getAngleSetpointDegrees();
-        return (currentAngle <= (target + RobotConstants.ArmConstants.RotationGains.TOLERANCE.getDegrees()) 
-            && currentAngle >= (target - RobotConstants.ArmConstants.RotationGains.TOLERANCE.getDegrees()));
+        double target = getAngleSetPoint();
+        return (currentAngle <= (target + 5) 
+            && currentAngle >= (target - 5));
     }
 
     /*
@@ -103,30 +116,20 @@ public class ArmSubsystem extends SubsystemBase
 
     public double getArmAngleDegrees()
     {
-        return m_angle_encoder.getAngle().getDegrees();
+        return m_angle_encoder.getAngle();
     }
-
-    public double getAngleSetpointDegrees()
-    {
-        return Units.radiansToDegrees(angleSetPointRadians);
-    }
-
-    public void setAngleSetpointRadians(double angleSetpoint)
-    {
-        this.angleSetPointRadians = angleSetpoint;
-    }
-
+    /* 
     public void setSetpoint(double Setpoint)
     {
         m_rotationPIDController.setSetpoint(Setpoint);
     }
+    */
 
     public void periodic()
     {
-        SmartDashboard.putNumber("Arm Angle", (m_angle_encoder.getAngle().getDegrees()));
-        SmartDashboard.putNumber("Setpoint", getAngleSetpointDegrees());
-        SmartDashboard.putNumber("Measurement", getArmAngleDegrees());
-        SmartDashboard.putNumber("Error", Units.radiansToDegrees(getAngleSetpointDegrees() - getArmAngleDegrees()));
+        SmartDashboard.putNumber("Arm Angle", (m_angle_encoder.getAngle()));
+        SmartDashboard.putNumber("Setpoint", getAngleSetPoint());
+        SmartDashboard.putNumber("Error", Units.radiansToDegrees(getAngleSetPoint() - getArmAngleDegrees()));
         SmartDashboard.putBoolean("isOpenLoopRotation", isOpenLoopRotation);
 
     }
@@ -135,7 +138,7 @@ public class ArmSubsystem extends SubsystemBase
     {
         return m_angle_encoder.isConnected();
     }
-
+    
     public class RevThroughBoreEncoder
     {
         private DutyCycleEncoder m_dutyCycleEncoder;
@@ -146,7 +149,12 @@ public class ArmSubsystem extends SubsystemBase
         {
             m_dutyCycleEncoder = new DutyCycleEncoder(dioChannel);
             m_dutyCycleEncoder.setDutyCycleRange(1.0/1024.0, 1023.0/1024.0);
-            m_dutyCycleEncoder.setDistancePerRotation(360);
+            //m_dutyCycleEncoder.setDistancePerRotation(360);
+        }
+
+        public double getAngleOffset()
+        {
+            return RobotConstants.ArmConstants.ARM_OFFSET_DEGREES.getDegrees();
         }
 
         public Rotation2d getOffset()
@@ -174,10 +182,11 @@ public class ArmSubsystem extends SubsystemBase
             return (m_dutyCycleEncoder.isConnected());
         }
 
-        public Rotation2d getAngle()
+        public double getAngle()
         {
-            double angle = m_dutyCycleEncoder.getDistance() % 360;
-            
+            double angle = m_dutyCycleEncoder.getAbsolutePosition() % 360;
+            return (angle * 360);
+            /* 
             angle -= m_Offset.getDegrees();
 
             if (m_Inverted)
@@ -189,8 +198,8 @@ public class ArmSubsystem extends SubsystemBase
             {
                 angle += 360;
             }
-
-            return Rotation2d.fromDegrees(angle % 360);
+            */
+            
         }
     }
     
