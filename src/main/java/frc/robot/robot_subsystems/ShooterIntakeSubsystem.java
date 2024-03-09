@@ -14,28 +14,28 @@ public class ShooterIntakeSubsystem extends SubsystemBase {
 
     public ShooterIntakeSubsystem()
     {
-        clockShooter = new CANSparkMax(0, MotorType.kBrushless);
-        antiClockShooter = new CANSparkMax(1, MotorType.kBrushless);
-        antiClockShooter.setInverted(true); // invertts one motor
-        antiClockShooter.follow(clockShooter);
+        clockShooter = new CANSparkMax(10, MotorType.kBrushless);
+        antiClockShooter = new CANSparkMax(11, MotorType.kBrushless);
 
         intakeMotorController = new Spark(2);
     }
-
-    public void intake()
+  
+    public void intake(int intakePosNeg)
     {
-        intakeMotorController.set(0.6);
+        intakeMotorController.set(0.6 * intakePosNeg);
     }
 
-    public void shoot()
+    public void shoot(int shootPosNeg)
     {
-        clockShooter.set(0.6);
+        clockShooter.set(1 * shootPosNeg);
+        antiClockShooter.set(-1 * shootPosNeg);
     }
 
     public void brake()
     {
         intakeMotorController.set(0);
         clockShooter.set(0);
+        antiClockShooter.set(0);
     }
 
 }

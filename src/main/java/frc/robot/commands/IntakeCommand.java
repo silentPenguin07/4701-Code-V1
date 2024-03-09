@@ -3,15 +3,16 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.robot_subsystems.ShooterIntakeSubsystem;
 
-public class ShootIntakeCommand extends Command {
+
+public class IntakeCommand extends Command {
     
     private final ShooterIntakeSubsystem shooterIntakeSubsystem;
-    private boolean cancel;
+    private boolean reverse; 
 
-    public ShootIntakeCommand(ShooterIntakeSubsystem shootIntake, boolean cancel)
+    public IntakeCommand(ShooterIntakeSubsystem shootIntake, boolean reverse)
     {
         shooterIntakeSubsystem = shootIntake;
-        this.cancel = cancel;
+        this.reverse = reverse;
     }
 
     public void initialize()
@@ -22,8 +23,16 @@ public class ShootIntakeCommand extends Command {
 
     public void execute()
     {
-        shooterIntakeSubsystem.intake();
-        shooterIntakeSubsystem.shoot();
+        
+        if (reverse)
+        {
+            shooterIntakeSubsystem.intake(1);
+        }
+        else
+        {
+            shooterIntakeSubsystem.intake(-1);
+        }
+        
     }
 
     public void end(boolean interrupted)
@@ -33,7 +42,7 @@ public class ShootIntakeCommand extends Command {
 
     public boolean isFinished()
     {
-        return cancel;
+        return false;
     }
 
 }

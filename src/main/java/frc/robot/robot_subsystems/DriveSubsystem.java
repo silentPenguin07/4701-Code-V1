@@ -81,7 +81,7 @@ public class DriveSubsystem extends EntechSubsystem{
             this::resetOdometry, // resets odometry
             this::getSpeeds, // ChassisSpeeds supplier
             this::driveRobotRelative,
-            new HolonomicPathFollowerConfig(FIELD_WIDTH_INCHES, FIELD_LENGTH_INCHES, new ReplanningConfig()),
+            new HolonomicPathFollowerConfig(4.5, Units.inchesToMeters(21.287), new ReplanningConfig()),
             () -> {
                 // Boolean supplier that controls when the path will be mirrored for the red alliance
                 // This will flip the path being followed to the red side of the field.

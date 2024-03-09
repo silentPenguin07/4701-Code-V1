@@ -20,6 +20,7 @@ import frc.robot.commands.ArmRotateCommand;
 
 public class ArmSubsystem extends SubsystemBase
 {
+    
     // instance data
     
     private final Constraints m_rotationConstraints = new Constraints(RotationConstraints.MAX_ROTATION_VELOCITY_RPS, RotationConstraints.MAX_ROTATION_ACCELERATION_RPSPS);
@@ -44,7 +45,7 @@ public class ArmSubsystem extends SubsystemBase
         isOpenLoopRotation = false;
 
         m_angle_encoder.setInverted(true);
-        m_angle_encoder.setOffset(ArmConstants.ARM_OFFSET_DEGREES);
+        //m_angle_encoder.setOffset(ArmConstants.ARM_OFFSET_DEGREES);
 
         SmartDashboard.putData("Arm Rotation PID Controller", m_rotationPIDController);
     }
@@ -57,14 +58,14 @@ public class ArmSubsystem extends SubsystemBase
     public void armForward()
     {
         
-        m_right.set(0.4 / ArmConstants.ARM_RATIO);
-        m_left.set(-0.4 * ArmConstants.ARM_RATIO); 
+        m_right.set(0.5);
+        m_left.set(-0.5 * ArmConstants.ARM_RATIO); 
     }
 
     public void armBackward()
     {
-        m_right.set(-0.4 * ArmConstants.ARM_RATIO);
-        m_left.set(0.4 / ArmConstants.ARM_RATIO);
+        m_right.set(0.5 );
+        m_left.set(-0.5 * ArmConstants.ARM_RATIO);
     }
 
     public void armBrake()
@@ -142,7 +143,7 @@ public class ArmSubsystem extends SubsystemBase
     public class RevThroughBoreEncoder
     {
         private DutyCycleEncoder m_dutyCycleEncoder;
-        private Rotation2d m_Offset = Rotation2d.fromDegrees(0);
+        private double m_Offset = 0;
         private boolean m_Inverted;
 
         public RevThroughBoreEncoder(int dioChannel)
@@ -150,19 +151,23 @@ public class ArmSubsystem extends SubsystemBase
             m_dutyCycleEncoder = new DutyCycleEncoder(dioChannel);
             m_dutyCycleEncoder.setDutyCycleRange(1.0/1024.0, 1023.0/1024.0);
             //m_dutyCycleEncoder.setDistancePerRotation(360);
+            //setOffset(RobotConstants.ArmConstants.ARM_OFFSET_DEGREES);
+            //m_dutyCycleEncoder.setPositionOffset((RobotConstants.ArmConstants.ARM_OFFSET_DEGREES) / 360);
         }
 
+        /**
         public double getAngleOffset()
         {
             return RobotConstants.ArmConstants.ARM_OFFSET_DEGREES.getDegrees();
         }
+        */
 
-        public Rotation2d getOffset()
+        public double getOffset()
         {
             return m_Offset;
         }
 
-        public void setOffset(Rotation2d m_Offset)
+        public void setOffset(double m_Offset)
         {
             this.m_Offset = m_Offset;
         }
@@ -185,6 +190,7 @@ public class ArmSubsystem extends SubsystemBase
         public double getAngle()
         {
             double angle = m_dutyCycleEncoder.getAbsolutePosition() % 360;
+            System.out.println(angle * 360);
             return (angle * 360);
             /* 
             angle -= m_Offset.getDegrees();

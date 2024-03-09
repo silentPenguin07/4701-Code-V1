@@ -35,19 +35,23 @@ public class ArmRotateCommand extends Command {
     // called every time the scheduler runs while the command is scheduled
     public void execute()
     {
-        m_arm.armForward(); 
         
-        if ((m_arm.getArmAngleDegrees() < m_arm.getAngleSetPoint()) || ((m_arm.getArmAngleDegrees() > 270)))
+        if((m_arm.getArmAngleDegrees() > 70) && !(m_arm.getArmAngleDegrees() > 300))
         {
-            m_arm.armForward();
+            m_arm.armBrake();
         }
-        else
-        {
-            if(m_arm.getArmAngleDegrees() > m_arm.getAngleSetPoint() && !(m_arm.getArmAngleDegrees() > 270))
-            {
-                m_arm.armBackward();
+        else{
+            if ((m_arm.getArmAngleDegrees() < m_arm.getAngleSetPoint()) || ((m_arm.getArmAngleDegrees() > 300)))
+            {   
+                m_arm.armForward();
             }
-            
+            else
+            {
+                if(m_arm.getArmAngleDegrees() > m_arm.getAngleSetPoint() && !(m_arm.getArmAngleDegrees() > 300))
+                {
+                    m_arm.armBackward();
+                }
+            }
             
         }
     }

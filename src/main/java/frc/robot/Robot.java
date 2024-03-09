@@ -12,7 +12,7 @@ public class Robot extends TimedRobot{
     private RobotContainer m_robotContainer;
     private CommandFactory m_commandFactory;
     private OperatorInterface m_operatorInterface;
-    private Command armCommand;
+ 
 
     @Override
     public void robotInit() {
@@ -58,9 +58,6 @@ public class Robot extends TimedRobot{
     
     @Override
     public void teleopInit() {
-        // m_commandFactory.gyroResetCommand().schedule();
-        // m_commandFactory.homeLimbCommand().schedule();
-
         if (m_autonomousCommand != null) {
             m_autonomousCommand.cancel();
         }
@@ -76,6 +73,7 @@ public class Robot extends TimedRobot{
     @Override
     public void autonomousInit()
     {
+        /*
         // TODO: add zeroing command
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -83,7 +81,8 @@ public class Robot extends TimedRobot{
         if (m_autonomousCommand != null)
         {
             m_autonomousCommand.schedule();
-        }
+        }*/
+        
     }
 
     // called periodically during autonomous

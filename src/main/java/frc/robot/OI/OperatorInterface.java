@@ -7,9 +7,12 @@ import frc.robot.CommandFactory;
 import frc.robot.Robot;
 import frc.robot.RobotConstants;
 import frc.robot.RobotContainer;
+import frc.robot.commands.ArmBackwardCommand;
+import frc.robot.commands.ArmForwardCommand;
 import frc.robot.commands.ArmRotateCommand;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.ShootIntakeCommand;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.ShootCommand;
 import frc.robot.commands.XCommand;
 import frc.robot.robot_subsystems.ArmSubsystem;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -29,9 +32,14 @@ public class OperatorInterface {
                                 .setDefaultCommand(new DriveCommand(robotContainer.getDriveSubsystem(), driveJoystick));
                 
 
-                new JoystickButton(armController, 2).onTrue(new ArmRotateCommand(robotContainer.getArmSubsystem(), RobotConstants.ArmConstants.RotationSetpoints.LOW_RADIANS));
-                new JoystickButton(armController, 3).onTrue(new ArmRotateCommand(robotContainer.getArmSubsystem(), RobotConstants.ArmConstants.RotationSetpoints.HIGH_RADIANS));
-                //new JoystickButton(armController, 5).onTrue(new ShootIntakeCommand(robotContainer.getShooterIntakeSubsystem(), true));
-                //new JoystickButton(armController, 6).onTrue(new ShootIntakeCommand(robotContainer.getShooterIntakeSubsystem(), false));
+                //new JoystickButton(armController, 2).whileTrue(new ArmRotateCommand(robotContainer.getArmSubsystem(), RobotConstants.ArmConstants.RotationSetpoints.LOW_RADIANS));
+                //new JoystickButton(armController, 3).whileTrue(new ArmRotateCommand(robotContainer.getArmSubsystem(), RobotConstants.ArmConstants.RotationSetpoints.HIGH_RADIANS));
+          
+                new JoystickButton(armController, 3).whileTrue(new ArmForwardCommand(robotContainer.getArmSubsystem()));
+                //new JoystickButton(armController, 2).whileTrue(new ArmBackwardCommand(robotContainer.getArmSubsystem()));
+                new JoystickButton(armController, 5).whileTrue(new IntakeCommand(robotContainer.getShooterIntakeSubsystem(), true));
+                new JoystickButton(armController, 4).whileTrue(new IntakeCommand(robotContainer.getShooterIntakeSubsystem(), false));
+                new JoystickButton(armController, 6).whileTrue(new ShootCommand(robotContainer.getShooterIntakeSubsystem(), false));
+                new JoystickButton(armController, 9).whileTrue(new ShootCommand(robotContainer.getShooterIntakeSubsystem(), true));
         }
 }
